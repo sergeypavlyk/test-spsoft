@@ -15,8 +15,6 @@ The project includes the following implemented features:
 
 - custom, reusable dropdown select component is available in the src/components/ui directory.
 
-These implementations demonstrate modular and reusable design patterns for common functionalities in React applications.
-
 ## Getting Started
 
 First, run the development server:

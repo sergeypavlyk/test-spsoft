@@ -1,3 +1,4 @@
+import { handleError } from "@/lib/utils";
 import { useCallback, useEffect, useState } from "react";
 
 interface FetchState<T> {
@@ -19,10 +20,10 @@ export function useFetch<T>(url: string, options?: RequestInit) {
     originalRequest: null,
   });
 
-  const fetchData = useCallback(() => {
-    const controller = new AbortController();
-    const { signal } = controller;
+  const controller = new AbortController();
+  const { signal } = controller;
 
+  const fetchData = useCallback(async () => {
     setState({
       data: null,
       isLoading: true,
@@ -30,63 +31,47 @@ export function useFetch<T>(url: string, options?: RequestInit) {
       originalRequest: null,
     });
 
-    const fetchWithAbort = async () => {
-      try {
-        const response = await fetch(url, { ...options, signal });
+    try {
+      const response = await fetch(url, { ...options, signal });
 
-        const originalRequest = {
-          headers: response.headers,
-          status: response.status,
-          statusText: response.statusText,
-        };
+      const originalRequest = {
+        headers: response.headers,
+        status: response.status,
+        statusText: response.statusText,
+      };
 
-        let errorMessage = null;
-
-        if (!response.ok) {
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.message || `HTTP error! Status: ${response.status}`;
-          } catch {
-            errorMessage = `HTTP error! Status: ${response.status}`;
-          }
-          throw new Error(errorMessage);
-        }
-
-        const contentType = response.headers.get("Content-Type");
-        const data = contentType?.includes("application/json")
-          ? ((await response.json()) as T)
-          : (null as T);
-
-        setState({
-          data,
-          isLoading: false,
-          error: null,
-          originalRequest,
-        });
-      } catch (err: any) {
-        if (err.name !== "AbortError") {
-          setState({
-            data: null,
-            isLoading: false,
-            error: err.message,
-            originalRequest: null,
-          });
-        }
+      if (!response.ok) {
+        await handleError(response);
       }
-    };
 
-    fetchWithAbort();
+      const contentType = response.headers.get("Content-Type");
+      const data = contentType?.includes("application/json")
+        ? ((await response.json()) as T)
+        : (null as T);
 
-    return () => {
-      controller.abort();
-    };
+      setState({
+        data,
+        isLoading: false,
+        error: null,
+        originalRequest,
+      });
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        setState({
+          data: null,
+          isLoading: false,
+          error: err.message,
+          originalRequest: null,
+        });
+      }
+    }
   }, [url, options]);
 
   useEffect(() => {
-    const abortFetch = fetchData();
+    fetchData();
 
     return () => {
-      abortFetch();
+      controller.abort();
     };
   }, [fetchData]);
 

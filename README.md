@@ -8,10 +8,12 @@ The project includes the following implemented features:
 
 - use-fetch: A custom hook for handling fetch operations.
 - use-paginated-fetch: A custom hook for managing paginated data fetching.
-Both hooks can be found in the src/hooks directory.
-Reusable Dropdown Select Component
 
-2. A custom, reusable dropdown select component is available in the src/components/ui directory.
+  Both hooks can be found in the src/hooks directory.
+
+2. Reusable Dropdown Select Component
+
+- custom, reusable dropdown select component is available in the src/components/ui directory.
 
 These implementations demonstrate modular and reusable design patterns for common functionalities in React applications.
 

@@ -11,7 +11,8 @@ The project includes the following implemented features:
 Both hooks can be found in the src/hooks directory.
 Reusable Dropdown Select Component
 
-A custom, reusable dropdown select component is available in the src/components/ui directory.
+2. A custom, reusable dropdown select component is available in the src/components/ui directory.
+
 These implementations demonstrate modular and reusable design patterns for common functionalities in React applications.
 
 ## Getting Started
